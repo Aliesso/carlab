@@ -10,12 +10,12 @@ const STEPS = [
     title: 'Hər şey alt gövdədən başlayır.',
     text: 'E36 platforması: öndə MacPherson dayaqları, arxada isə Compact-a xas, E30-dan miras qalan yarımasılı qollu asqı. Alt örtük və ekzoz xətti ilk yerləşir.',
     specs: [['Təkər bazası', '2700 mm'], ['Uzunluq', '4210 mm'], ['Çəki', '≈ 1250 kq']],
-    cam: { p: [5.0, 1.9, 5.6], t: [0, 0.3, 0] },
-    side: 'l',
+    cam: { p: [-5.2, 1.9, 5.4], t: [0, 0.3, 0] },
+    side: 'r',
     callouts: [
-      { pick: ['chassis', [1, -0.3, 0.6]], label: 'Ön alt hissə', value: 'MacPherson dayaqlar' },
-      { pick: ['chassis', [-1, -0.4, 0.3]], label: 'Ekzoz', value: 'Paslanmayan polad' },
-      { pick: ['chassis', [-0.2, -1, 0.8]], label: 'Alt örtük', value: 'Aerodinamik panel', v: 'd' },
+      { part: 'chassis', at: [0.2, 0.45, 1], label: 'Təkər yuvaları', value: 'Arxada yarımasılı qollar' },
+      { part: 'chassis', at: [0, 0.12, 0.3], label: 'Ekzoz', value: 'Paslanmayan polad' },
+      { part: 'chassis', at: [0.55, 0.05, 0.95], label: 'Alt örtük', value: 'Aerodinamik panel', v: 'd' },
     ],
   },
   {
@@ -27,9 +27,9 @@ const STEPS = [
     cam: { p: [1.4, 1.4, 9.4], t: [0.1, 0.45, 0] },
     side: 'r',
     callouts: [
-      { pick: ['wheelBR', 'side'], label: 'Ərinti disk', value: '15″ · BMW mərkəz qapağı', v: 'u' },
-      { pick: ['wheelBR', 'sideLow'], label: 'Şin', value: '205/60 R15', v: 'd' },
-      { pick: ['wheelFR', 'side'], label: 'Əyləc diski', value: 'Ventilyasiyalı', v: 'd' },
+      { part: 'wheelBR', at: [0.5, 0.55, 1], label: 'Ərinti disk', value: '15″ · BMW mərkəz qapağı', v: 'u' },
+      { part: 'wheelBR', at: [0.5, 0.03, 1], label: 'Şin', value: '205/60 R15', v: 'd' },
+      { part: 'wheelFR', at: [0.6, 0.62, 1], label: 'Əyləc diski', value: 'Ventilyasiyalı', v: 'd' },
     ],
   },
   {
@@ -41,9 +41,9 @@ const STEPS = [
     cam: { p: [-2.7, 4.8, 3.9], t: [0.1, 0.7, 0] },
     side: 'l',
     callouts: [
-      { pick: ['interior', [1, 0.7, 0]], label: 'Cihazlar paneli', value: 'Narıncı işıq' },
-      { pick: ['interior', [0.4, 1, -0.6]], label: 'Sükan', value: 'Dəri · 3 qollu' },
-      { pick: ['interior', [-1, 0.6, 0.4]], label: 'Arxa oturacaq', value: 'Qatlanan' },
+      { part: 'interior', at: [0.8, 0.78, 0.3], label: 'Cihazlar paneli', value: 'Narıncı işıq' },
+      { part: 'interior', at: [0.72, 0.68, 0.3], label: 'Sükan', value: 'Dəri · 3 qollu' },
+      { part: 'interior', at: [0.32, 0.55, 0.55], label: 'Arxa oturacaq', value: 'Qatlanan' },
     ],
   },
   {
@@ -55,9 +55,9 @@ const STEPS = [
     cam: { p: [-5.6, 2.2, 4.6], t: [0, 0.6, 0] },
     side: 'r',
     callouts: [
-      { pick: ['front', [1, 0.2, 0.7]], label: 'Ön modul', value: 'Bamper + qanadlar' },
-      { pick: ['rear', [-1, 0.3, 0.7]], label: 'Arxa modul', value: 'Qısa hetçbek arxası' },
-      { pick: ['skirts', [0, -1, 1]], label: 'Astana', value: 'Kuzov rəngində', v: 'd' },
+      { part: 'front', at: [0.85, 0.45, 1], label: 'Ön modul', value: 'Bamper + qanadlar' },
+      { part: 'rear', at: [0.15, 0.6, 1], label: 'Arxa modul', value: 'Qısa hetçbek arxası' },
+      { part: 'skirts', at: [0.5, 0.4, 1], label: 'Astana', value: 'Kuzov rəngində', v: 'd' },
     ],
   },
   {
@@ -69,8 +69,8 @@ const STEPS = [
     cam: { p: [0.5, 1.8, 8.4], t: [0, 0.65, 0] },
     side: 'l',
     callouts: [
-      { pick: ['doorR', 'side'], label: 'Yan qapı', value: 'Uzun, çərçivəli' },
-      { pick: ['doorR', [0.6, 0.5, 1]], label: 'Yan güzgü', value: 'Elektrik tənzimli' },
+      { part: 'doorR', at: [0.5, 0.42, 1], label: 'Yan qapı', value: 'Uzun, çərçivəli' },
+      { part: 'doorR', at: [0.93, 0.82, 1], label: 'Yan güzgü', value: 'Elektrik tənzimli' },
     ],
   },
   {
@@ -82,8 +82,8 @@ const STEPS = [
     cam: { p: [-6.3, 4.5, -3.9], t: [-0.3, 0.7, 0] },
     side: 'r',
     callouts: [
-      { pick: ['hood', [0.3, 1, 0]], label: 'Kapot', value: 'Altında M44 · 140 a.g.' },
-      { pick: ['hatch', [-1, 0.4, 0]], label: 'Hetçbek qapısı', value: 'Şüşə ilə birgə açılır' },
+      { part: 'hood', at: [0.5, 1, 0.5], label: 'Kapot', value: 'Altında M44 · 140 a.g.' },
+      { part: 'hatch', at: [0, 0.5, 0.5], label: 'Hetçbek qapısı', value: 'Şüşə ilə birgə açılır' },
     ],
   },
   {
@@ -95,9 +95,9 @@ const STEPS = [
     cam: { p: [5.1, 3.9, -5.3], t: [0, 0.9, 0] },
     side: 'l',
     callouts: [
-      { pick: ['glass', [1, 1, 0]], label: 'Ön şüşə', value: 'Laminat' },
-      { pick: ['roof', [0, 1, 0]], label: 'Lyuk', value: 'Elektrikli' },
-      { pick: ['glass', [0, 0.3, -1]], label: 'Yan pəncərə', value: 'Çərçivəsiz kənar' },
+      { part: 'glass', at: [0.9, 0.82, 0.5], label: 'Ön şüşə', value: 'Laminat' },
+      { part: 'roof', at: [0.5, 1, 0.5], label: 'Lyuk', value: 'Elektrikli' },
+      { part: 'glass', at: [0.5, 0.6, 0], label: 'Yan pəncərə', value: 'Çərçivəsiz kənar' },
     ],
   },
   {
@@ -106,12 +106,12 @@ const STEPS = [
     title: 'Dörd dairəvi göz.',
     text: 'İkiqat dairəvi faralar — BMW-nin imzası. Bu modeldə “angel eyes” halqaları, duman işıqları və tünd arxa fənərlər var.',
     specs: [['Faralar', '4 dairəvi'], ['Halqalar', 'Angel eyes'], ['Arxa', 'Tünd fənərlər']],
-    cam: { p: [6.3, 1.25, 2.9], t: [1.0, 0.6, 0] },
+    cam: { p: [3.4, 1.5, 7.6], t: [0.2, 0.6, 0] },
     side: 'r',
     callouts: [
-      { pick: ['lightF', [1, 0.4, 0.7]], label: 'Faralar', value: 'Angel eyes halqaları' },
-      { pick: ['lightF', [1, -0.7, 0.4]], label: 'Duman işığı', value: 'Bamperdə' },
-      { pick: ['lightR', [-1, 0.4, 0.7]], label: 'Arxa fənər', value: 'Tünd linza' },
+      { part: 'lightF', at: [0.9, 0.72, 0.85], label: 'Faralar', value: 'Angel eyes halqaları' },
+      { part: 'lightF', at: [0.95, 0.12, 0.82], label: 'Duman işığı', value: 'Bamperdə' },
+      { part: 'lightR', at: [0.5, 0.6, 1], label: 'Arxa fənər', value: 'Tünd linza' },
     ],
   },
   {
@@ -123,8 +123,8 @@ const STEPS = [
     cam: { p: [7.0, 1.2, 0.9], t: [1.4, 0.55, 0] },
     side: 'l',
     callouts: [
-      { pick: ['grille', [1, 0.3, 0.1]], label: 'Böyrək barmaqlıq', value: 'Xrom çərçivə' },
-      { pick: ['grille', [1, -0.6, 0.6]], label: 'Alt hava girişi', value: 'Bamperdə' },
+      { part: 'grille', at: [1, 0.78, 0.4], label: 'Böyrək barmaqlıq', value: 'Xrom çərçivə' },
+      { part: 'grille', at: [1, 0.12, 0.5], label: 'Alt hava girişi', value: 'Bamperdə' },
     ],
   },
 ];

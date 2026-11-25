@@ -166,6 +166,43 @@ function extreme(part, dir) {
   return out;
 }
 
+/*
+  Precise anchor: `at` = [u, v, w] inside the part's bounding box
+  (u: 0 rear → 1 front, v: 0 bottom → 1 top, w: 0 left → 1 right).
+  A ray is cast from the step's camera through that point; the first surface of
+  the part it hits is where the arrow lands — i.e. exactly what is seen on screen there.
+*/
+const raycaster = new THREE.Raycaster();
+export function surfaceAnchor(parts, key, at, camPos) {
+  const part = parts[key];
+  if (!part) return null;
+  const b = part.box;
+  const target = new THREE.Vector3(
+    THREE.MathUtils.lerp(b.min.x, b.max.x, at[0]),
+    THREE.MathUtils.lerp(b.min.y, b.max.y, at[1]),
+    THREE.MathUtils.lerp(b.min.z, b.max.z, at[2]),
+  );
+  part.object.updateMatrixWorld(true);
+  const origin = new THREE.Vector3(...camPos);
+  raycaster.set(origin, target.clone().sub(origin).normalize());
+  raycaster.far = Infinity;
+  const hit = raycaster.intersectObject(part.object, true)[0];
+  if (hit) return hit.point.toArray();
+  // the line of sight missed the part: fall back to the nearest surface vertex
+  let best = Infinity;
+  const out = new THREE.Vector3();
+  for (const { geo, matrix } of part.meshes) {
+    const p = geo.attributes.position;
+    const step = Math.max(1, Math.floor(p.count / 6000));
+    for (let i = 0; i < p.count; i += step) {
+      tmp.fromBufferAttribute(p, i).applyMatrix4(matrix);
+      const d = tmp.distanceToSquared(target);
+      if (d < best) { best = d; out.copy(tmp); }
+    }
+  }
+  return out.toArray();
+}
+
 // spec: [partKey, [dx,dy,dz]] → outermost point in that direction
 //       [partKey, 'side' | 'sideLow'] → centre of the part on its outer face
 export function resolveAnchor(parts, spec) {

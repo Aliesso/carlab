@@ -17,9 +17,9 @@ const STEPS = [
     cam: { p: [5.0, 1.9, 5.6], t: [0, 0.3, 0] },
     side: 'l',
     callouts: [
-      { pick: ['chassis', [1, -0.2, 0.6]], label: 'Ön asqı', value: 'MacPherson dayaq' },
-      { pick: ['chassis', [-1, -0.4, 0.3]], label: 'Ekzoz', value: 'Xrom uc' },
-      { pick: ['chassis', [-0.3, -1, 0.8]], label: 'Arxa asqı', value: 'Çoxqollu (multi-link)', v: 'd' },
+      { part: 'chassis', at: [0.88, 0.6, 0.9], label: 'Ön asqı', value: 'MacPherson dayaq' },
+      { part: 'chassis', at: [0.02, 0.55, 0.75], label: 'Ekzoz', value: 'Xrom uc' },
+      { part: 'chassis', at: [0.16, 0.6, 0.9], label: 'Arxa asqı', value: 'Çoxqollu (multi-link)', v: 'd' },
     ],
   },
   {
@@ -31,9 +31,9 @@ const STEPS = [
     cam: { p: [1.4, 1.4, 9.4], t: [0.1, 0.45, 0] },
     side: 'r',
     callouts: [
-      { pick: ['wheelBR', 'side'], label: 'Ərinti disk', value: '18″ · 10 qollu', v: 'u' },
-      { pick: ['wheelBR', 'sideLow'], label: 'Şin', value: '235/45 R18', v: 'd' },
-      { pick: ['wheelFR', 'side'], label: 'Əyləc supportu', value: 'Qırmızı · disk əyləc', v: 'd' },
+      { part: 'wheelBR', at: [0.5, 0.55, 1], label: 'Ərinti disk', value: '18″ · 10 qollu', v: 'u' },
+      { part: 'wheelBR', at: [0.5, 0.03, 1], label: 'Şin', value: '235/45 R18', v: 'd' },
+      { part: 'wheelFR', at: [0.6, 0.62, 1], label: 'Əyləc supportu', value: 'Qırmızı · disk əyləc', v: 'd' },
     ],
   },
   {
@@ -45,9 +45,9 @@ const STEPS = [
     cam: { p: [-2.7, 4.8, 3.9], t: [0.1, 0.7, 0] },
     side: 'l',
     callouts: [
-      { pick: ['interior', [1, 0.5, 0]], label: 'Panel', value: 'SYNC · MyFord Touch' },
-      { pick: ['interior', [0, 0.4, 1]], label: 'Qapı paneli', value: 'Dəri üzlük' },
-      { pick: ['interior', [-1, 0.3, 0.4]], label: 'Arxa oturacaq', value: '3 nəfərlik' },
+      { part: 'interior', at: [0.63, 0.66, 0.5], label: 'Panel', value: 'SYNC · MyFord Touch' },
+      { part: 'interior', at: [0.5, 0.5, 1], label: 'Qapı paneli', value: 'Dəri üzlük' },
+      { part: 'interior', at: [0.32, 0.5, 0.5], label: 'Arxa oturacaq', value: '3 nəfərlik' },
     ],
   },
   {
@@ -59,9 +59,9 @@ const STEPS = [
     cam: { p: [-5.6, 2.2, 4.6], t: [0, 0.6, 0] },
     side: 'r',
     callouts: [
-      { pick: ['front', [1, 0.2, 0.7]], label: 'Ön modul', value: 'Deformasiya zonası' },
-      { pick: ['rear', [-1, 0.3, 0.7]], label: 'Arxa modul', value: 'Bamper + qanad' },
-      { pick: ['core', [0, -0.6, 1]], label: 'Astana', value: 'Bor polad', v: 'd' },
+      { part: 'front', at: [0.85, 0.45, 1], label: 'Ön modul', value: 'Deformasiya zonası' },
+      { part: 'rear', at: [0.15, 0.6, 1], label: 'Arxa modul', value: 'Bamper + qanad' },
+      { part: 'core', at: [0.5, 0.12, 1], label: 'Astana', value: 'Bor polad', v: 'd' },
     ],
   },
   {
@@ -73,9 +73,9 @@ const STEPS = [
     cam: { p: [0.5, 1.8, 8.4], t: [0, 0.65, 0] },
     side: 'l',
     callouts: [
-      { pick: ['doorFR', 'side'], label: 'Ön qapı', value: 'Yan zərbə tiri' },
-      { pick: ['doorFR', [0.3, 0.8, 1]], label: 'Yan güzgü', value: 'Elektrik · isidilən' },
-      { pick: ['doorBR', 'side'], label: 'Arxa qapı', value: 'Tam ölçülü' },
+      { part: 'doorFR', at: [0.5, 0.42, 1], label: 'Ön qapı', value: 'Yan zərbə tiri' },
+      { part: 'doorFR', at: [0.93, 0.88, 1], label: 'Yan güzgü', value: 'Elektrik · isidilən' },
+      { part: 'doorBR', at: [0.5, 0.42, 1], label: 'Arxa qapı', value: 'Tam ölçülü' },
     ],
   },
   {
@@ -87,8 +87,8 @@ const STEPS = [
     cam: { p: [-6.3, 4.5, -3.9], t: [-0.3, 0.7, 0] },
     side: 'r',
     callouts: [
-      { pick: ['hood', [0.3, 1, -0.3]], label: 'Kapot', value: 'Power dome xətləri' },
-      { pick: ['trunk', [-0.5, 1, 0]], label: 'Baqaj qapağı', value: '453 litr' },
+      { part: 'hood', at: [0.5, 1, 0.5], label: 'Kapot', value: 'Power dome xətləri' },
+      { part: 'trunk', at: [0.5, 1, 0.5], label: 'Baqaj qapağı', value: '453 litr' },
     ],
   },
   {
@@ -100,9 +100,9 @@ const STEPS = [
     cam: { p: [5.1, 3.9, -5.3], t: [0, 0.9, 0] },
     side: 'l',
     callouts: [
-      { pick: ['glass', [1, 1, 0]], label: 'Ön şüşə', value: 'Akustik laminat' },
-      { pick: ['roof', [0, 1, 0]], label: 'Dam xətti', value: 'Coupe-tipli fastback' },
-      { pick: ['glass', [0, 0.3, -1]], label: 'Yan şüşə', value: 'Xrom haşiyə' },
+      { part: 'glass', at: [0.74, 0.93, 0.5], label: 'Ön şüşə', value: 'Akustik laminat' },
+      { part: 'roof', at: [0.5, 1, 0.5], label: 'Dam xətti', value: 'Coupe-tipli fastback' },
+      { part: 'glass', at: [0.5, 0.55, 0], label: 'Yan şüşə', value: 'Xrom haşiyə' },
     ],
   },
   {
@@ -111,11 +111,11 @@ const STEPS = [
     title: 'Və gözlər açılır.',
     text: 'Arxaya doğru uzanan proyektor faralar və LED gündüz işıqları; arxada geniş LED stop-fənərlər.',
     specs: [['Faralar', 'Proyektor'], ['Gündüz işığı', 'LED'], ['Arxa', 'LED fənərlər']],
-    cam: { p: [6.3, 1.25, 2.9], t: [1.0, 0.6, 0] },
+    cam: { p: [3.4, 1.5, 7.6], t: [0.2, 0.6, 0] },
     side: 'r',
     callouts: [
-      { pick: ['lightF', [1, 0.3, 0.8]], label: 'Fara', value: 'Proyektor · LED DRL' },
-      { pick: ['lightR', [-1, 0.3, 0.8]], label: 'Arxa fənər', value: 'LED' },
+      { part: 'lightF', at: [0.9, 0.6, 0.85], label: 'Fara', value: 'Proyektor · LED DRL' },
+      { part: 'lightR', at: [0.1, 0.6, 0.85], label: 'Arxa fənər', value: 'LED' },
     ],
   },
   {
@@ -127,8 +127,8 @@ const STEPS = [
     cam: { p: [7.0, 1.2, 0.9], t: [1.4, 0.55, 0] },
     side: 'l',
     callouts: [
-      { pick: ['grille', [1, 0.25, 0.1]], label: 'Trapesiya barmaqlıq', value: 'Aktiv hava jalüzləri' },
-      { pick: ['grille', [1, -0.7, 0.5]], label: 'Alt hava girişi', value: 'Bamperdə' },
+      { part: 'grille', at: [1, 0.6, 0.5], label: 'Trapesiya barmaqlıq', value: 'Aktiv hava jalüzləri' },
+      { part: 'front', at: [1, 0.15, 0.5], label: 'Alt hava girişi', value: 'Bamperdə' },
     ],
   },
 ];
@@ -172,8 +172,8 @@ export const fusion = {
   rules: [
     [O(7, 8, 9, 10, 15, 16, 17, 18, ...range(70, 87)), 'wheel#'],
     [O(3, 4), 'chassis'],
-    [O(2, 11, 46, ...range(49, 57), 60, 63, 64), 'interior'],
-    [O(20, 21, 22), 'core'],
+    [O(2, 11, 46, ...range(49, 56), 60, 63, 64), 'interior'],
+    [O(20, 21, 22, 57), 'core'], // 57 = inner body lining (door cards, floor tub)
     [O(25, 31), 'front'],
     [O(19, 26, 30, 36, 37, 59), 'rear'],
     [O(23, 24, 39), 'doorF*'],

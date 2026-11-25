@@ -14,9 +14,9 @@ const STEPS = [
     cam: { p: [4.8, 4.6, 5.2], t: [0, 0.45, 0] },
     side: 'l',
     callouts: [
-      { pick: ['chassis', [1, 0.6, 1]], at: [1.4, 0.7, 0.6], label: 'Ön asqı', value: 'Fox 3.1″ amortizator' },
-      { pick: ['chassis', [-1, 0.4, 1]], at: [-1.4, 0.7, 0.6], label: 'Arxa asqı', value: 'Beşqollu, yaylı' },
-      { pick: ['chassis', [-1, -0.6, -0.3]], at: [-2, 0.3, -0.2], label: 'Ekzoz', value: 'Aktiv klapanlı' },
+      { part: 'chassis', at: [0.86, 0.55, 0.92], label: 'Ön asqı', value: 'Fox 3.1″ amortizator' },
+      { part: 'chassis', at: [0.16, 0.55, 0.92], label: 'Arxa asqı', value: 'Beşqollu, yaylı' },
+      { part: 'chassis', at: [0.02, 0.3, 0.75], label: 'Ekzoz', value: 'Aktiv klapanlı' },
     ],
   },
   {
@@ -28,9 +28,9 @@ const STEPS = [
     cam: { p: [6.3, 4.0, 4.3], t: [1.3, 0.9, 0] },
     side: 'r',
     callouts: [
-      { pick: ['engine', [0, 1, 0]], at: [1.5, 0.9, 0], label: '5.2L Supercharged V8', value: '720 a.g. · 868 Nm' },
-      { pick: ['engine', [1, 0.3, 0.4]], at: [2, 0.8, 0.3], label: 'Kompressor', value: '2.65 L · Roots tipli' },
-      { pick: ['engine', [-0.6, -1, 0.3]], at: [1.2, 0.5, 0.3], label: 'Ötürmə', value: '10R80 · 4×4' },
+      { part: 'engine', at: [0.45, 0.45, 1], label: '5.2L Supercharged V8', value: '720 a.g. · 868 Nm' },
+      { part: 'engine', at: [0.55, 1, 0.5], label: 'Kompressor', value: '2.65 L · Roots tipli' },
+      { part: 'engine', at: [0.05, 0.25, 0.7], label: 'Ötürmə', value: '10R80 · 4×4' },
     ],
   },
   {
@@ -42,9 +42,9 @@ const STEPS = [
     cam: { p: [1.6, 1.5, 8.6], t: [-0.1, 0.6, 0] },
     side: 'l',
     callouts: [
-      { pick: ['wheelBR', 'side'], at: [-1.4, 0.4, 0.9], label: 'Yüngül ərinti disk', value: '17″ · beadlock üslubu', v: 'u' },
-      { pick: ['wheelBR', 'sideLow'], at: [-1.4, 0.1, 0.9], label: 'Şin', value: '37″ all-terrain', v: 'd' },
-      { pick: ['wheelFR', 'side'], at: [1.4, 0.4, 0.9], label: 'Disk əyləc', value: '4 təkərdə', v: 'd' },
+      { part: 'wheelBR', at: [0.5, 0.55, 1], label: 'Yüngül ərinti disk', value: '17″ · beadlock üslubu', v: 'u' },
+      { part: 'wheelBR', at: [0.5, 0.03, 1], label: 'Şin', value: '37″ all-terrain', v: 'd' },
+      { part: 'wheelFR', at: [0.62, 0.62, 1], label: 'Disk əyləc', value: '4 təkərdə', v: 'd' },
     ],
   },
   {
@@ -56,9 +56,9 @@ const STEPS = [
     cam: { p: [-3.8, 6.4, 5.0], t: [0.2, 0.9, 0] },
     side: 'r',
     callouts: [
-      { pick: ['interior', [1, 0.6, 0]], at: [0.8, 1, 0], label: 'Panel və ekran', value: '12″ · SYNC 4' },
-      { pick: ['interior', [0, 1, 0.5]], at: [0, 1.2, 0.4], label: 'Recaro oturacaq', value: 'Dəri · Alcantara' },
-      { pick: ['interior', [-1, 0.5, -0.3]], at: [-0.8, 1, -0.3], label: 'Arxa oturacaq', value: 'SuperCrew kabin' },
+      { part: 'interior', at: [0.88, 0.72, 0.5], label: 'Panel və ekran', value: '12″ · SYNC 4' },
+      { part: 'interior', at: [0.6, 0.75, 0.72], label: 'Recaro oturacaq', value: 'Dəri · Alcantara' },
+      { part: 'interior', at: [0.3, 0.65, 0.4], label: 'Arxa oturacaq', value: 'SuperCrew kabin' },
     ],
   },
   {
@@ -70,9 +70,9 @@ const STEPS = [
     cam: { p: [-6.0, 2.8, 5.0], t: [0, 0.85, 0] },
     side: 'l',
     callouts: [
-      { pick: ['body', [-0.6, 1, 0.6]], at: [-2, 1, 0.5], label: 'Yük yeri', value: '5.5 ft · alüminium', v: 'u' },
-      { pick: ['fenders', [0.6, 0.5, 1]], at: [1.6, 0.9, 0.9], label: 'Geniş qanadlar', value: '37″ təkər üçün' },
-      { pick: ['fenders', [0, -1, 1]], at: [0, 0.4, 0.9], label: 'Astana', value: 'Qoruyucu panel' },
+      { part: 'body', at: [0.18, 0.66, 0.93], label: 'Yük yeri', value: '5.5 ft · alüminium', v: 'u' },
+      { part: 'fenders', at: [0.86, 0.62, 1], label: 'Geniş qanadlar', value: '37″ təkər üçün' },
+      { part: 'fenders', at: [0.5, 0.08, 1], label: 'Astana', value: 'Qoruyucu panel' },
     ],
   },
   {
@@ -84,9 +84,9 @@ const STEPS = [
     cam: { p: [0.6, 2.1, 9.0], t: [0, 0.95, 0] },
     side: 'r',
     callouts: [
-      { pick: ['doorFR', 'side'], at: [0.6, 0.9, 0.95], label: 'Ön qapı', value: 'Alüminium panel' },
-      { pick: ['doorFR', [0.3, 0.6, 1]], at: [0.9, 1.2, 1], label: 'Yan güzgü', value: 'LED · kamera' },
-      { pick: ['doorBR', 'side'], at: [-0.5, 0.9, 0.95], label: 'Arxa qapı', value: 'Tam ölçülü' },
+      { part: 'doorFR', at: [0.5, 0.42, 1], label: 'Ön qapı', value: 'Alüminium panel' },
+      { part: 'doorFR', at: [0.97, 0.74, 1], label: 'Yan güzgü', value: 'LED · kamera' },
+      { part: 'doorBR', at: [0.5, 0.42, 1], label: 'Arxa qapı', value: 'Tam ölçülü' },
     ],
   },
   {
@@ -98,8 +98,8 @@ const STEPS = [
     cam: { p: [-5.6, 4.4, -3.8], t: [-0.2, 1.0, 0] },
     side: 'l',
     callouts: [
-      { pick: ['hood', [0, 1, 0]], at: [1.6, 1.1, 0], label: 'Kapot', value: 'Power dome · hava çıxışı' },
-      { pick: ['tailgate', [-1, 0.5, 0]], at: [-2.4, 1, 0], label: 'Yük qapağı', value: 'FORD yazısı' },
+      { part: 'hood', at: [0.55, 1, 0.5], label: 'Kapot', value: 'Power dome · hava çıxışı' },
+      { part: 'tailgate', at: [0, 0.6, 0.5], label: 'Yük qapağı', value: 'FORD yazısı' },
     ],
   },
   {
@@ -111,9 +111,9 @@ const STEPS = [
     cam: { p: [5.4, 4.4, -5.6], t: [0, 1.2, 0] },
     side: 'r',
     callouts: [
-      { pick: ['glass', [1, 1, 0]], at: [0.8, 1.4, 0], label: 'Ön şüşə', value: 'Akustik laminat' },
-      { pick: ['roof', [0.3, 1, 0]], at: [0, 1.7, 0], label: 'Dam işıqları', value: 'Kəhrəba LED' },
-      { pick: ['glass', [0, 0.3, -1]], at: [0, 1.3, -0.8], label: 'Yan pəncərə', value: 'Tonlu' },
+      { part: 'glass', at: [0.95, 0.75, 0.5], label: 'Ön şüşə', value: 'Akustik laminat' },
+      { part: 'roof', at: [0.97, 0.95, 0.5], label: 'Dam işıqları', value: 'Kəhrəba LED' },
+      { part: 'doorFL', at: [0.5, 0.86, 0], label: 'Yan pəncərə', value: 'Tonlu' },
     ],
   },
   {
@@ -122,12 +122,12 @@ const STEPS = [
     title: 'FORD barmaqlığı və LED gözlər.',
     text: 'Ön barmaqlıqda iri FORD hərfləri və kəhrəba marker işıqları, C-formalı LED faralar, arxada LED stop-fənərlər. Raptor R tam yığılıb.',
     specs: [['Faralar', 'LED · C-imza'], ['Barmaqlıq', 'FORD yazılı'], ['Arxa', 'LED fənərlər']],
-    cam: { p: [6.8, 1.7, 3.6], t: [1.0, 0.85, 0] },
+    cam: { p: [4.4, 2.0, 7.4], t: [0.3, 0.85, 0] },
     side: 'l',
     callouts: [
-      { pick: ['front', [1, 0.5, 0.8]], at: [2.3, 1, 0.7], label: 'LED fara', value: 'C-formalı imza' },
-      { pick: ['front', [1, 0.15, 0]], at: [2.4, 0.9, 0], label: 'FORD barmaqlığı', value: 'Kəhrəba marker işıqları' },
-      { pick: ['rear', [-1, 0.5, 0.8]], at: [-2.4, 1, 0.7], label: 'Arxa fənər', value: 'LED' },
+      { part: 'front', at: [0.97, 0.78, 0.86], label: 'LED fara', value: 'C-formalı imza' },
+      { part: 'front', at: [1, 0.62, 0.5], label: 'FORD barmaqlığı', value: 'Kəhrəba marker işıqları' },
+      { part: 'rear', at: [0.2, 0.75, 0.97], label: 'Arxa fənər', value: 'LED' },
     ],
   },
 ];

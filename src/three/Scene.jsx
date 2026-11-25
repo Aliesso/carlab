@@ -38,7 +38,10 @@ function CameraRig({ car }) {
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);
     store.u += (store.target - store.u) * (1 - Math.exp(-dt * 4.5));
-    if (INSTANT) store.u = store.target;
+    if (INSTANT) {
+      store.u = store.target;
+      window.__frames = (window.__frames || 0) + 1; // lets screenshot tests wait for real frames
+    }
     const u = clamp(store.u, 0, SECTIONS - 1);
     const i = Math.min(Math.floor(u), SECTIONS - 2);
     const f = smooth(clamp((u - i - 0.12) / 0.76));
@@ -99,29 +102,70 @@ const proj = new THREE.Vector3();
 const projC = new THREE.Vector3();
 const CENTER = new THREE.Vector3(0, 0.62, 0);
 
+// per-frame label layout shared by all callouts (reset once per rendered frame)
+const layout = { frame: -1, placed: [], card: null };
+function layoutFor(state, size) {
+  const f = state.gl.info.render.frame;
+  if (layout.frame !== f) {
+    layout.frame = f;
+    layout.placed = [];
+    // the visible text card (side card on desktop, bottom sheet on phones) — labels must not sit on it
+    const c = document.querySelector('.sec.on .card');
+    layout.card = c ? c.getBoundingClientRect() : null;
+  }
+  return layout;
+}
+
 function Callout({ at, label, value, index, num, visible, labelled, cardSide, v }) {
   const el = useRef();
   const { camera, size } = useThree();
   const last = useRef('');
   const mid = 'ah' + useId().replace(/[^a-zA-Z0-9]/g, '');
 
-  useFrame(() => {
+  useFrame((state) => {
     if (!el.current) return;
     proj.set(at[0], at[1], at[2]).project(camera);
     projC.copy(CENTER).project(camera);
     const px = (proj.x * 0.5 + 0.5) * size.width;
-    const phone = size.width < 700;
-    let h = proj.x >= projC.x ? 'r' : 'l';
-    const room = phone ? 175 : 300; // leader + label width
-    if (h === 'l' && px < room) h = 'r';
-    if (h === 'r' && px > size.width - room) h = 'l';
-    if (size.width > 900) {
-      if (cardSide === 'l' && h === 'l' && px - room < size.width * 0.42) h = 'r';
-      if (cardSide === 'r' && h === 'r' && px + room > size.width * 0.58) h = 'l';
-    }
-    // phone: the text card covers the bottom, so labels go up unless the point is already near the top
     const py = (0.5 - proj.y * 0.5) * size.height;
-    const vtc = phone ? (py < 150 ? 'd' : 'u') : v || (proj.y >= projC.y ? 'u' : 'd');
+    const phone = size.width < 700;
+
+    // preferred direction: away from the car's centre (phones: up, the text sheet is at the bottom)
+    const ph = proj.x >= projC.x ? 'r' : 'l';
+    const pv = phone ? (py < 150 ? 'd' : 'u') : v || (proj.y >= projC.y ? 'u' : 'd');
+    const flip = { r: 'l', l: 'r', u: 'd', d: 'u' };
+    const candidates = [ph + pv, ph + flip[pv], flip[ph] + pv, flip[ph] + flip[pv]];
+
+    // greedy layout: take the first placement that stays on screen and doesn't hit
+    // an already placed label (callouts run in index order each frame) or the text card
+    const L = layoutFor(state, size);
+    const card = el.current.lastElementChild;
+    const w = card.offsetWidth || 200;
+    const hh = card.offsetHeight || 44;
+    const len = phone ? 76 : 126; // leader length + gap (matches --len)
+    const rise = phone ? 30 : 52; // matches --rise
+    // score each placement: off-screen is worst, then overlap with the text card, then with other labels
+    const overlap = (r, o) => Math.max(0, Math.min(r.x1, o.x1) - Math.max(r.x0, o.x0)) * Math.max(0, Math.min(r.y1, o.y1) - Math.max(r.y0, o.y0));
+    let best = candidates[0];
+    let bestRect = null;
+    let bestScore = Infinity;
+    candidates.forEach((c, k) => {
+      const x0 = c[0] === 'r' ? px + len : px - len - w;
+      const cy = c[1] === 'u' ? py - rise : py + rise;
+      const r = { x0, x1: x0 + w, y0: cy - hh / 2, y1: cy + hh / 2 };
+      const off = Math.max(0, 8 - r.x0) + Math.max(0, r.x1 - (size.width - 8)) + Math.max(0, 70 - r.y0) + Math.max(0, r.y1 - (size.height - 8));
+      const cardHit = L.card ? overlap(r, { x0: L.card.left, x1: L.card.right, y0: L.card.top, y1: L.card.bottom }) : 0;
+      const labelHit = L.placed.reduce((s, o) => s + overlap(r, o), 0);
+      const score = off * 1000 + cardHit * 2 + labelHit + k; // k: keep the preferred order on ties
+      if (score < bestScore) {
+        bestScore = score;
+        best = c;
+        bestRect = r;
+      }
+    });
+    if (visible && labelled) L.placed.push(bestRect);
+    const h = best[0];
+    const vtc = best[1];
     const key = h + vtc;
     if (key !== last.current) {
       last.current = key;

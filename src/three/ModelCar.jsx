@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { Part } from './Part';
-import { buildModel, PIVOT, resolveAnchor } from './buildModel';
+import { buildModel, PIVOT, resolveAnchor, surfaceAnchor } from './buildModel';
 
 /* The selected car's GLB, cut into parts that fly in on scroll (see src/cars/*.js). */
 export const ModelCar = memo(function ModelCar({ car, onAnchors, onReady }) {
@@ -31,7 +31,10 @@ export const ModelCar = memo(function ModelCar({ car, onAnchors, onReady }) {
 
   useEffect(() => {
     const anchors = {};
-    for (const s of car.steps) anchors[s.key] = s.callouts.map((c) => resolveAnchor(parts, c.pick) ?? [0, -50, 0]);
+    for (const s of car.steps)
+      anchors[s.key] = s.callouts.map(
+        (c) => (c.part ? surfaceAnchor(parts, c.part, c.at, s.cam.p) : resolveAnchor(parts, c.pick)) ?? [0, -50, 0],
+      );
     onAnchors?.(anchors);
     onReady?.();
   }, [parts, car, onAnchors, onReady]);
