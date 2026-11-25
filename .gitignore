@@ -1,0 +1,6 @@
+node_modules
+dist
+
+# original Sketchfab downloads — the site only loads the compressed *.opt.glb copies
+public/models/*.glb
+!public/models/*.opt.glb
