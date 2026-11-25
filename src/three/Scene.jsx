@@ -204,6 +204,7 @@ function Floor({ accent }) {
 }
 
 export default function Scene({ car, active, show, onModelReady }) {
+  const dpr = useThree((s) => s.viewport.dpr);
   const [anchors, setAnchors] = useState(null);
   return (
     <>
@@ -220,7 +221,8 @@ export default function Scene({ car, active, show, onModelReady }) {
       <Floor accent={car.theme.accent} />
       <BlobShadow />
       <Sparkles count={70} scale={[14, 4, 14]} position={[0, 2, 0]} size={2.2} speed={0.25} opacity={0.35} color={car.theme.accent} />
-      <EffectComposer multisampling={4}>
+      {/* 4× MSAA half-float buffers on hi-dpi screens can exhaust GPU memory (→ context loss): only 2× on 1× screens */}
+      <EffectComposer multisampling={dpr > 1.2 ? 0 : 2}>
         <Bloom mipmapBlur intensity={0.75} luminanceThreshold={1.05} luminanceSmoothing={0.25} />
         <Vignette offset={0.28} darkness={0.7} />
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />

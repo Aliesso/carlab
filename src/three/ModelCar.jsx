@@ -7,6 +7,13 @@ import { buildModel, PIVOT, resolveAnchor } from './buildModel';
 export const ModelCar = memo(function ModelCar({ car, onAnchors, onReady }) {
   const gltf = useGLTF(car.url);
   const parts = useMemo(() => buildModel(gltf.scene, car), [gltf, car]);
+  // free the per-triangle split geometry when this car is swapped out
+  useEffect(
+    () => () => {
+      for (const p of Object.values(parts)) for (const m of p.meshes) if (m.geo.userData.generated) m.geo.dispose();
+    },
+    [parts],
+  );
 
   const defs = useMemo(() => {
     const out = car.defs

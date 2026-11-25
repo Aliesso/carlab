@@ -101,6 +101,13 @@ export function buildModel(scene, car) {
     if (matName === car.paintMat) mat = M.paintSolid;
     else if (mat && !mat.userData.__tuned) {
       mat.envMapIntensity = 1.1;
+      // transmission renders the whole scene again every frame — fake it with plain alpha
+      if (mat.transmission > 0) {
+        mat.transmission = 0;
+        mat.transparent = true;
+        mat.opacity = Math.min(mat.opacity, 0.45);
+        mat.depthWrite = false;
+      }
       mat.userData.__tuned = true;
     }
     const ghost = car.ghostMats.test(matName);
@@ -118,7 +125,11 @@ export function buildModel(scene, car) {
       const base = key.slice(0, -1);
       keyFn = (c) => base + (c.x >= 0 ? 'F' : 'B') + (c.z >= 0 ? 'R' : 'L');
     }
-    if (keyFn) for (const [k, g] of splitTriangles(src.geometry, matrix, keyFn)) add(k, g, mat, matrix, ghost);
+    if (keyFn)
+      for (const [k, g] of splitTriangles(src.geometry, matrix, keyFn)) {
+        g.userData.generated = true; // ours to dispose (the GLB's own geometry stays cached)
+        add(k, g, mat, matrix, ghost);
+      }
     else add(key, src.geometry, mat, matrix, ghost);
   }
   return parts;

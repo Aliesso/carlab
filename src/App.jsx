@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Component, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { PerformanceMonitor, useGLTF } from '@react-three/drei';
 import Lenis from 'lenis';
 import Scene from './three/Scene';
 import { CARS, carById } from './cars';
@@ -26,6 +26,21 @@ function Swatches({ paints, value, onChange, big }) {
       ))}
     </div>
   );
+}
+
+// WebGL context creation can throw (e.g. the browser blocked WebGL for this page) — don't take the page down
+class GLBoundary extends Component {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(err) {
+    console.warn('[3D] disabled:', err?.message);
+    this.props.onFail?.();
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
 }
 
 function CarSwitch({ car, onSelect, big }) {
@@ -55,6 +70,8 @@ export default function App() {
   const [paint, setPaintIdx] = useState(0);
   const [canvasReady, setCanvasReady] = useState(false);
   const [modelReady, setModelReady] = useState(false);
+  const [glFailed, setGlFailed] = useState(null); // null | 'lost' | 'blocked'
+  const [dpr, setDpr] = useState(() => Math.min(1.5, window.devicePixelRatio || 1));
   const pctRef = useRef();
   const barRef = useRef();
 
@@ -142,7 +159,22 @@ export default function App() {
 
   return (
     <>
-      <div className={`loader${ready ? ' done' : ''}`}>
+      {glFailed && (
+        <div className="gl-fail" role="alert">
+          <b>3D göstərilə bilmir</b>
+          {glFailed === 'lost' ? (
+            <p>Video kart 3D kontekstini itirdi. Səhifəni yeniləyin.</p>
+          ) : (
+            <p>
+              Brauzer bu səhifə üçün WebGL-i bloklayıb (adətən video kart əvvəl həddən artıq yüklənəndə olur). Brauzeri tam bağlayıb
+              yenidən açın və “Hardware acceleration” ayarının aktiv olduğunu yoxlayın.
+            </p>
+          )}
+          <button className="btn" onClick={() => window.location.reload()}>Yenilə</button>
+        </div>
+      )}
+
+      <div className={`loader${ready || glFailed ? ' done' : ''}`}>
         <div className="loader-mark">
           <i /><i /><i />
         </div>
@@ -150,14 +182,27 @@ export default function App() {
       </div>
 
       <div className="stage">
-        <Canvas
-          dpr={[1, 1.75]}
-          gl={{ antialias: false, powerPreference: 'high-performance' }}
-          camera={{ fov: 30, near: 0.1, far: 80, position: [6.6, 2.5, 6.4] }}
-          onCreated={() => setTimeout(() => setCanvasReady(true), 300)}
-        >
-          <Scene key={car.id} car={car} active={active} show={show} onModelReady={onModelReady} />
-        </Canvas>
+        <GLBoundary onFail={() => setGlFailed('blocked')}>
+          <Canvas
+            dpr={dpr}
+            gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}
+            camera={{ fov: 30, near: 0.1, far: 80, position: [6.6, 2.5, 6.4] }}
+            onCreated={({ gl }) => {
+              const el = gl.domElement;
+              // keep the page alive if the GPU drops the context; it can be restored
+              el.addEventListener('webglcontextlost', (e) => {
+                e.preventDefault();
+                setGlFailed('lost');
+              });
+              el.addEventListener('webglcontextrestored', () => setGlFailed(null));
+              setTimeout(() => setCanvasReady(true), 300);
+            }}
+          >
+            {/* drop resolution when frames get slow instead of pushing the GPU into a reset */}
+            <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(Math.min(1.5, window.devicePixelRatio))} />
+            <Scene key={car.id} car={car} active={active} show={show} onModelReady={onModelReady} />
+          </Canvas>
+        </GLBoundary>
       </div>
       <div className="grain" />
 
