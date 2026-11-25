@@ -155,7 +155,14 @@ export default function App() {
     window.history.replaceState(null, '', url);
   };
 
-  const goTo = (i, duration = 1.6) => lenis?.scrollTo(i * sectionH(), { duration });
+  // ease in-out so long jumps start and end gently (Lenis' default easing launches at full speed)
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const goTo = (i, duration) => {
+    const from = Math.round(window.scrollY / sectionH());
+    // ~0.55 s per section, so the build plays back part by part instead of flashing past
+    const d = duration ?? clamp(0.6 + Math.abs(i - from) * 0.55, 1, 6.5);
+    lenis?.scrollTo(i * sectionH(), { duration: d, easing: easeInOut, lock: true });
+  };
   const step = active >= 1 && active <= steps.length ? steps[active - 1] : null;
   const paints = car.paints;
 
@@ -210,7 +217,7 @@ export default function App() {
 
       {/* ---------------- HUD ---------------- */}
       <header className="nav">
-        <button className="brand" onClick={() => goTo(0, 2.2)}>
+        <button className="brand" onClick={() => goTo(0)}>
           <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M3 20c3-6 7-8 13-8s9 2 13 8" />
             <circle cx="9" cy="21" r="3" />
@@ -297,7 +304,7 @@ export default function App() {
               <Swatches paints={paints} value={paint} onChange={setPaintIdx} big />
             </div>
             <div className="final-actions rv">
-              <button className="btn" onClick={() => goTo(0, 3.2)}>
+              <button className="btn" onClick={() => goTo(0)}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
                   <path d="M3 3v5h5" />

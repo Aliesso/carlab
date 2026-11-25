@@ -59,8 +59,11 @@ function CameraRig({ car }) {
     // slow turntable on the hero and final sections
     const t = state.clock.elapsedTime;
     const fin = smooth(clamp(u - (SECTIONS - 2)));
-    store.orbit += dt * 0.16 * fin;
-    sph.theta += wrapPi(store.orbit) * fin + Math.sin(t * 0.25) * 0.06 * (1 - smooth(clamp(u)));
+    // turntable on the final section; when leaving it, unwind the angle smoothly the short way
+    // (scaling the raw angle by `fin` used to whip the camera round half a turn)
+    if (fin > 0.98) store.orbit += dt * 0.16;
+    else store.orbit = wrapPi(store.orbit) * Math.exp(-dt * 1.6);
+    sph.theta += store.orbit + Math.sin(t * 0.25) * 0.06 * (1 - smooth(clamp(u)));
 
     // portrait screens: wider lens + pull back until the car fits the narrow width
     const aspect = size.width / size.height;
