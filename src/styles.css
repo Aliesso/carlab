@@ -236,9 +236,9 @@ h1 .grad {
 .co[data-v='d'] .co-card { top: var(--rise); }
 
 .co.on .co-dot { transform: scale(1); transition-delay: calc(var(--i) * 0.12s + 0.25s); }
-.co.on .co-line { opacity: 1; transition-delay: calc(var(--i) * 0.12s + 0.3s); }
-.co.on .co-line path { stroke-dashoffset: 0; transition-delay: calc(var(--i) * 0.12s + 0.3s); }
-.co.on .co-card { opacity: 1; transform: translate(0, -50%); transition-delay: calc(var(--i) * 0.12s + 0.65s); }
+.co.lab .co-line { opacity: 1; transition-delay: calc(var(--i) * 0.12s + 0.3s); }
+.co.lab .co-line path { stroke-dashoffset: 0; transition-delay: calc(var(--i) * 0.12s + 0.3s); }
+.co.lab .co-card { opacity: 1; transform: translate(0, -50%); transition-delay: calc(var(--i) * 0.12s + 0.65s); }
 .co:not(.on) .co-dot::after { animation: none; opacity: 0; }
 
 /* ---------- responsive ---------- */
@@ -281,6 +281,7 @@ html { transition: none; }
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
 .car-switch button {
+  white-space: nowrap;
   display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
   font: 500 12px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
   transition: color 0.3s var(--ease), background 0.3s var(--ease);
@@ -317,7 +318,6 @@ html { transition: none; }
 [data-car='bmw'] .assembly-bar i { background: linear-gradient(90deg, #6fc3ff, #1c3f94, #e4202f); }
 
 @media (max-width: 900px) {
-  .nav .car-switch { display: none; }
 }
 /* Fusion: chrome + ruby stripe */
 [data-car='fusion'] .card::before {
@@ -336,3 +336,91 @@ html { transition: none; }
 .gl-fail b { font: 600 18px var(--display); }
 .gl-fail p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-top: 10px; }
 .gl-fail .btn { margin-top: 18px; }
+
+/* ================= phones (portrait) ================= */
+@media (max-width: 700px) {
+  .grain { display: none; }
+  .nav { padding: max(14px, env(safe-area-inset-top)) 16px 14px; }
+  .brand { font-size: 13px; gap: 8px; }
+  .brand svg { width: 24px; height: 24px; }
+  .assembly-label { display: none; }
+  .assembly b { font-size: 18px; }
+  .assembly-bar { width: 44px; margin-left: 8px; }
+
+  /* car switch: own row under the header */
+  .nav .car-switch {
+    display: inline-flex; position: fixed; left: 50%; transform: translateX(-50%);
+    top: calc(max(14px, env(safe-area-inset-top)) + 44px); padding: 3px;
+  }
+  .car-switch button { padding: 6px 11px; font-size: 10px; letter-spacing: 0.1em; gap: 6px; }
+
+  .rail, .status, .paint-dock { display: none; }
+  .sec { padding: 0 12px; }
+
+  /* hero: text on top, car below (camera slides the picture down) */
+  .hero { align-items: flex-start; }
+  .hero-inner { margin-top: 0; padding-top: calc(max(14px, env(safe-area-inset-top)) + 104px); }
+  .eyebrow { font-size: 9.5px; letter-spacing: 0.22em; margin-bottom: 14px; }
+  h1 { font-size: clamp(46px, 15vw, 84px); }
+  .lead { font-size: 14px; line-height: 1.55; margin-top: 14px; max-width: 320px; }
+  [data-car='bmw'] .hero-inner::before { margin-bottom: 18px; width: 90px; }
+  .scroll-hint { bottom: calc(18px + env(safe-area-inset-bottom)); }
+
+  /* steps: compact sheet at the bottom, car framed above it */
+  .step { align-items: flex-end; justify-content: center; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .card { width: 100%; max-width: 520px; padding: 18px 18px 16px; border-radius: 20px; background: linear-gradient(160deg, rgba(16, 19, 26, 0.86), rgba(10, 12, 16, 0.72)); }
+  .card::before { top: 18px; height: 34px; }
+  .card-big { font-size: 84px; top: -14px; }
+  .num { font-size: 10.5px; }
+  .num span { margin-left: 6px; }
+  .card h2 { font-size: 23px; margin-top: 10px; }
+  .card p { font-size: 13.5px; line-height: 1.55; margin-top: 10px; }
+  .specs { margin-top: 14px; }
+  .specs div { padding: 10px 8px 0 0; }
+  .specs div + div { padding-left: 10px; }
+  .specs dd { font-size: 13px; white-space: normal; line-height: 1.2; }
+  .specs dt { font-size: 8.5px; letter-spacing: 0.1em; }
+
+  /* final */
+  .final { padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .final h2 { font-size: 44px; }
+  .final-name { font-size: 13px; margin: 10px 0 16px; }
+  .swatches.big { gap: 9px; }
+  .swatches.big button { width: 32px; height: 32px; }
+  .final-actions { gap: 8px; }
+  .final-actions .btn { margin-top: 18px; padding: 11px 16px; font-size: 13px; }
+  .note { font-size: 9px; margin-top: 12px; max-width: 330px; line-height: 1.5; }
+
+  /* arrows: shorter leader, smaller wrapping labels */
+  .co { --len: 70px; --rise: 30px; }
+  .co-line { width: 70px; height: 37px; }
+  .co-dot { width: 10px; height: 10px; left: -5px; top: -5px; }
+  .co-card { padding: 6px 9px 7px; column-gap: 7px; border-radius: 9px; max-width: 150px; white-space: normal; }
+  .co-card b { font-size: 11.5px; line-height: 1.2; }
+  .co-card small { font-size: 9.5px; }
+
+  .gl-fail { width: calc(100% - 32px); }
+}
+
+/* ================= phones (landscape) ================= */
+@media (max-height: 520px) and (orientation: landscape) {
+  .grain, .rail, .status, .paint-dock { display: none; }
+  .nav { padding: 10px 18px; }
+  .sec { padding: 0 4vw; }
+  .step { align-items: center; padding-bottom: 0; }
+  .step.side-l { justify-content: flex-start; }
+  .step.side-r { justify-content: flex-end; }
+  .card { max-width: 340px; padding: 16px 18px; }
+  .card::before { top: 16px; height: 28px; }
+  .card h2 { font-size: 21px; margin-top: 8px; }
+  .card p { font-size: 12.5px; line-height: 1.5; margin-top: 8px; }
+  .specs, .card-big { display: none; }
+  .hero-inner { margin-top: 0; }
+  h1 { font-size: 60px; }
+  .lead, .scroll-hint { display: none; }
+  .final { padding-bottom: 14px; }
+  .final h2 { font-size: 36px; }
+  .final-name { margin: 6px 0 10px; }
+  .final-actions .btn { margin-top: 10px; padding: 9px 16px; }
+  .note { display: none; }
+}

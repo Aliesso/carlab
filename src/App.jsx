@@ -9,6 +9,8 @@ import { clamp, SECTIONS, store } from './store';
 
 let lenis = null;
 const pad = (n) => String(n).padStart(2, '0');
+// one scroll section = 100vh; on phones innerHeight changes as the address bar hides, so measure the section
+const sectionH = () => document.querySelector('.sec')?.offsetHeight || window.innerHeight;
 const initialCar = () => carById(new URLSearchParams(window.location.search).get('car'));
 
 function Swatches({ paints, value, onChange, big }) {
@@ -99,7 +101,7 @@ export default function App() {
     raf = requestAnimationFrame(loop);
 
     const onScroll = () => {
-      const u = window.scrollY / window.innerHeight;
+      const u = window.scrollY / sectionH();
       store.target = u;
       const a = Math.round(u);
       setActive(a);
@@ -153,7 +155,7 @@ export default function App() {
     window.history.replaceState(null, '', url);
   };
 
-  const goTo = (i, duration = 1.6) => lenis?.scrollTo(i * window.innerHeight, { duration });
+  const goTo = (i, duration = 1.6) => lenis?.scrollTo(i * sectionH(), { duration });
   const step = active >= 1 && active <= steps.length ? steps[active - 1] : null;
   const paints = car.paints;
 

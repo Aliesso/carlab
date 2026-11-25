@@ -59,10 +59,11 @@ function CameraRig({ car }) {
     store.orbit += dt * 0.16 * fin;
     sph.theta += wrapPi(store.orbit) * fin + Math.sin(t * 0.25) * 0.06 * (1 - smooth(clamp(u)));
 
-    // portrait screens: back off so the car fits
+    // portrait screens: wider lens + pull back until the car fits the narrow width
     const aspect = size.width / size.height;
     const portrait = aspect < 1;
-    sph.radius *= portrait ? Math.min(2.2, 1.25 / aspect) : aspect < 1.35 ? 1.12 : 1;
+    camera.fov = portrait ? 40 : 30;
+    sph.radius *= portrait ? clamp(0.8 / aspect, 1, 1.9) : size.height < 520 ? 1.3 : aspect < 1.35 ? 1.12 : 1;
 
     mouse.current.x += (store.mouse.x - mouse.current.x) * (1 - Math.exp(-dt * 3));
     mouse.current.y += (store.mouse.y - mouse.current.y) * (1 - Math.exp(-dt * 3));
@@ -71,14 +72,23 @@ function CameraRig({ car }) {
 
     pos.setFromSpherical(sph).add(target);
     camera.position.copy(pos);
-    camera.lookAt(portrait ? target.clone().setY(target.y - 1.15) : target);
+    camera.lookAt(target);
 
-    // frame the car opposite the text card
-    const sA = sideShift(SIDES[i]);
-    const sB = sideShift(SIDES[i + 1]);
-    const shift = portrait ? 0 : THREE.MathUtils.lerp(sA, sB, f);
-    const frac = 0.17; // fraction of the screen width
-    camera.filmOffset = -shift * frac * camera.getFilmWidth() * 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+    if (portrait) {
+      // phone: the text sits at the bottom (steps/final) or top (hero) → slide the picture into the free space
+      const oy = (k) => (k === 0 ? -0.14 : k === SECTIONS - 1 ? 0.12 : 0.13);
+      const shiftY = THREE.MathUtils.lerp(oy(i), oy(i + 1), f) * size.height;
+      camera.filmOffset = 0;
+      camera.setViewOffset(size.width, size.height, 0, shiftY, size.width, size.height);
+    } else {
+      if (camera.view?.enabled) camera.clearViewOffset();
+      // frame the car opposite the text card
+      const sA = sideShift(SIDES[i]);
+      const sB = sideShift(SIDES[i + 1]);
+      const shift = THREE.MathUtils.lerp(sA, sB, f);
+      const frac = 0.17; // fraction of the screen width
+      camera.filmOffset = -shift * frac * camera.getFilmWidth() * 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+    }
     camera.updateProjectionMatrix();
   });
   return null;
@@ -89,7 +99,7 @@ const proj = new THREE.Vector3();
 const projC = new THREE.Vector3();
 const CENTER = new THREE.Vector3(0, 0.62, 0);
 
-function Callout({ at, label, value, index, visible, cardSide, v }) {
+function Callout({ at, label, value, index, num, visible, labelled, cardSide, v }) {
   const el = useRef();
   const { camera, size } = useThree();
   const last = useRef('');
@@ -100,15 +110,18 @@ function Callout({ at, label, value, index, visible, cardSide, v }) {
     proj.set(at[0], at[1], at[2]).project(camera);
     projC.copy(CENTER).project(camera);
     const px = (proj.x * 0.5 + 0.5) * size.width;
+    const phone = size.width < 700;
     let h = proj.x >= projC.x ? 'r' : 'l';
-    const room = 300;
+    const room = phone ? 175 : 300; // leader + label width
     if (h === 'l' && px < room) h = 'r';
     if (h === 'r' && px > size.width - room) h = 'l';
     if (size.width > 900) {
       if (cardSide === 'l' && h === 'l' && px - room < size.width * 0.42) h = 'r';
       if (cardSide === 'r' && h === 'r' && px + room > size.width * 0.58) h = 'l';
     }
-    const vtc = v || (proj.y >= projC.y ? 'u' : 'd');
+    // phone: the text card covers the bottom, so labels go up unless the point is already near the top
+    const py = (0.5 - proj.y * 0.5) * size.height;
+    const vtc = phone ? (py < 150 ? 'd' : 'u') : v || (proj.y >= projC.y ? 'u' : 'd');
     const key = h + vtc;
     if (key !== last.current) {
       last.current = key;
@@ -119,7 +132,7 @@ function Callout({ at, label, value, index, visible, cardSide, v }) {
 
   return (
     <Html position={at} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
-      <div ref={el} className={`co${visible ? ' on' : ''}`} data-h="r" data-v="u" style={{ '--i': index }}>
+      <div ref={el} className={`co${visible ? ' on' : ''}${visible && labelled ? ' lab' : ''}`} data-h="r" data-v="u" style={{ '--i': index }}>
         <span className="co-dot" />
         <svg className="co-line" width="120" height="64" viewBox="0 0 120 64" fill="none">
           <defs>
@@ -130,7 +143,7 @@ function Callout({ at, label, value, index, visible, cardSide, v }) {
           <path d="M8 56 L52 12 L120 12" pathLength="1" markerStart={`url(#${mid})`} />
         </svg>
         <div className="co-card">
-          <span className="co-k">{String(index + 1).padStart(2, '0')}</span>
+          <span className="co-k">{String(num + 1).padStart(2, '0')}</span>
           <b>{label}</b>
           <small>{value}</small>
         </div>
@@ -139,11 +152,34 @@ function Callout({ at, label, value, index, visible, cardSide, v }) {
   );
 }
 
+// phones: every point keeps its dot, but only one arrow + label is shown at a time, cycling
+function useCycle(active, show, phone) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    setN(0);
+    if (!phone || !show) return;
+    const id = setInterval(() => setN((k) => k + 1), 2400);
+    return () => clearInterval(id);
+  }, [active, show, phone]);
+  return n;
+}
+
 function Callouts({ car, active, show, anchors }) {
+  const phone = useThree((st) => st.size.width < 700);
+  const cycle = useCycle(active, show, phone);
   if (!anchors) return null;
   return car.steps.map((s, si) =>
     s.callouts.map((c, i) => (
-      <Callout key={s.key + i} {...c} at={anchors[s.key][i]} index={i} visible={show && active === si + 1} cardSide={s.side} />
+      <Callout
+        key={s.key + i}
+        {...c}
+        at={anchors[s.key][i]}
+        index={phone ? 0 : i}
+        num={i}
+        visible={show && active === si + 1}
+        labelled={!phone || cycle % s.callouts.length === i}
+        cardSide={s.side}
+      />
     )),
   );
 }
